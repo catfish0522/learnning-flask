@@ -6,6 +6,9 @@
 - [learnning-flask](#learnning-flask)
   - [About Flask](#about-flask)
   - [Hello World](#hello-world)
+  - [Project](#project)
+    - [Flask 工程结构](#flask-%e5%b7%a5%e7%a8%8b%e7%bb%93%e6%9e%84)
+    - [安装依赖](#%e5%ae%89%e8%a3%85%e4%be%9d%e8%b5%96)
 
 ## About Flask
 
@@ -58,3 +61,45 @@ python app.py
 2. 创建app，也就是一个Flask应用实例。
 3. 创建index方法，使用app.route装饰器绑定路由规则，当访问`http://127.0.0.1:5000/`时，运行该方法，这样就可以在浏览器上看到了返回结果Hello World。
 4. 运行Flask应用。
+
+## Project
+
+### Flask 工程结构
+
+一个项目往往有很多文件，为了更好的对项目进行管理，同时也为了后期的扩展，需要好好设计一下工程的骨架结构。
+
+``` shell
+flask-project
+├── app                         # app目录
+│   ├── __init__.py             # 初始化app包
+│   ├── models.py               # 数据模型
+│   ├── static                  # 静态文件目录
+│   │   ├── bootstrap.css       # 样式文件
+│   │   └── index.css           # 样式文件
+│   ├── templates               # 模板目录
+│   │   └── index.html          # 模板文件
+│   └── views.py                # 视图
+├── config.py                   # 应用配置信息，比如数据库配置
+├── manage.py                   # 脚本，比如启动服务器，与数据库交互
+├── README.md                   # 项目的说明
+├── requirenments.txt           # 添加项目的依赖
+└── run.py                      # 项目运行脚本
+```
+
+使用app包来组织应用，前端使用Bootstrap，也加入进来。
+
+### 安装依赖
+
+首先，在 `requirenments.txt` 添加项目的依赖。
+
+> Flask
+
+> flask-mongoengine
+
+> Flask-Script
+
+然后使用pip安装这些依赖。
+
+``` shell
+sudo pip install -r requirenments.txt
+```
