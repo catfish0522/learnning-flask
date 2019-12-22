@@ -9,6 +9,7 @@
   - [Project](#project)
     - [Flask 工程结构](#flask-%e5%b7%a5%e7%a8%8b%e7%bb%93%e6%9e%84)
     - [安装依赖](#%e5%ae%89%e8%a3%85%e4%be%9d%e8%b5%96)
+    - [重新修改项目](#%e9%87%8d%e6%96%b0%e4%bf%ae%e6%94%b9%e9%a1%b9%e7%9b%ae)
 
 ## About Flask
 
@@ -103,3 +104,63 @@ flask-project
 ``` shell
 sudo pip install -r requirenments.txt
 ```
+
+### 重新修改项目
+
+在这个项目中，实现Hello World。
+
+在 `__init__.py` 中：
+
+``` python
+from flask import Flask
+
+app = Flask(__name__)
+app.config.from_object("config")
+
+from app import views, models
+```
+
+此时，在app包中实例化Flask的应用，从 `config.py` 中加载配置。
+
+在 `views.py` 中：
+
+``` python
+from app import app
+from flask import render_template
+
+@app.route('/')
+def index():
+    return render_template("index.html", text="Hello New World")
+```
+
+此时，不是直接返回数据，而是通过模板渲染数据。
+
+在 `index.html` 模板文件中，最终会通过 `{{}}` 将Hello World展示出来。__更多的展现方式参考[Jinja2](https://palletsprojects.com/p/jinja/)文档__
+
+``` jinja
+{{ text }}
+```
+
+然后，可以在Flask-Script中，运行项目。
+
+往 `manage.py` 中，加入代码：
+
+``` python
+from flask_script import Manager, Server
+from app import app
+
+manager = Manager(app)
+
+manager.add_command("runserver", Server(host='127.0.0.1', port=5000, use_debugger=True))
+
+if __name__ == "__main__":
+    manager.run()
+```
+
+此时，这样运行这个项目：
+
+``` shell
+python manage.py runserver
+```
+
+此时，又可以在浏览器中看到亲切的Hello World。
