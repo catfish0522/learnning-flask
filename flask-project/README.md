@@ -1,61 +1,93 @@
 <!-- 项目的说明 -->
 
-# 重新修改项目
+# Datebase
 
-在这个项目中，实现Hello World。
+使用MongoDB存储数据，Flask应用通过MongoEngine与MongoDB交互。
 
-在 `__init__.py` 中：
+## 安装MongoDB
 
-``` python
+可以参考官方[文档](https://docs.mongodb.com/manualtutorial)进行安装。
+
+## 运行MongoDB
+
+安装完成后，可以通过以下命令，启动或者关闭MongoDB：
+
+```shell
+sudo systemctl start mongodb
+sudo systemctl stop mongodb
+```
+
+在终端中使用mongo命令打开MongoDB的控制台进行操作。为了方便操作数据库，可以安装第三方的控制台工具。推荐使用Robomongo开源免费的跨平台工具。
+
+## 配置MongoDB
+
+在工程中配置MongoDB，首先在`config.py`进行添加：
+
+```python
+MONGODB_SETTINGS = {'DB': 'todo_db'}
+```
+
+## 开发
+
+在`__init__.py`中导入MongoEngine，并且实例化：
+
+```python
 from flask import Flask
+from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
 app.config.from_object("config")
 
+db = MongoEngine(app)
+
 from app import views, models
 ```
 
-此时，在app包中实例化Flask的应用，从 `config.py` 中加载配置。
+然后创建数据模型，用于映射MongoDB中的Document对象，在`models.py`中：
 
-在 `views.py` 中：
+```python
+import datetime
+from app import db
 
-``` python
-from app import app
-from flask import render_template
 
-@app.route('/')
-def index():
-    return render_template("index.html", text="Hello New World")
+class Todo(db.Document):
+    content = db.StringField(required=True, max_length=20)
+    time = db.DateTimeField(default=datetime.datetime.now())
+    status = db.IntField(default=0)
 ```
 
-此时，不是直接返回数据，而是通过模板渲染数据。
+比较简单，只有三个字段，分别表示：todo的内容，todo的发布时间，todo的完成状态。
 
-在 `index.html` 模板文件中，最终会通过 `{{}}` 将Hello World展示出来。__更多的展现方式参考[Jinja2](https://palletsprojects.com/p/jinja/)文档__
+在`manage.py`中加入数据库的命令：
 
-``` jinja
-{{ text }}
-```
-
-然后，可以在Flask-Script中，运行项目。
-
-往 `manage.py` 中，加入代码：
-
-``` python
+```python
 from flask_script import Manager, Server
 from app import app
+from app.models import Todo
 
 manager = Manager(app)
 
-manager.add_command("runserver", Server(host='127.0.0.1', port=5000, use_debugger=True))
+manager.add_command("runserver",
+    Server(host='127.0.0.1', port=5000, use_debugger=True))
+
+@manager.command
+def save_todo():
+    todo = Todo(content="my fitst todo")
+    todo.save()
+
 
 if __name__ == "__main__":
     manager.run()
 ```
 
-此时，这样运行这个项目：
+然后，在终端中运行：
 
-``` shell
-python manage.py runserver
+```shell
+sudo mongod
 ```
 
-此时，又可以在浏览器中看到亲切的Hello World。
+```shell
+python manage.py save_todo
+```
+
+此时，使用Robomongo，就可以查看到插入的数据。
