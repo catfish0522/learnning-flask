@@ -1,3 +1,20 @@
-<!-- 样式文件 -->
+<!-- 样本文件 -->
 
-{{ text }}
+<table class="table">
+    <thead>
+        <tr>
+            <td>Conten</td>
+            <td>Time</td>
+            <td>Status</td>
+        </tr>
+    </thead>
+    <tbody>
+    {% for t in todos %}
+        <tr>
+            <td>{{ t.content }}</td>
+            <td>{{ t.time }}</td>
+            <td>{{ t.status }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
