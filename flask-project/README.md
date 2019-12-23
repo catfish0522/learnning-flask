@@ -1,55 +1,48 @@
 <!-- 项目的说明 -->
 
-## Get Todos
+# Save Todo
 
-使用`manage.py`插入几条todo，然后，实现在前端展示所有todo的功能。
+之前都是用`manage.py`脚本保存的todo，那如何在前端浏览器上添加呢？
 
-### 前端
+- 使用表单接受输入，并传给Flask后台。
+- Flask获取到前端来的数据，将数据保存到MongoDB中。
 
-在模板中，使用表格展示所有的todo：
+## 前端
+
+现在`index.html`模板中，加入一个表单，可以输入的todo的内容：
 
 ```html
-<table class="table">
-    <thead>
-        <tr>
-            <td>Conten</td>
-            <td>Time</td>
-            <td>Status</td>
-        </tr>
-    </thead>
-    <tbody>
-    {% for t in todos %}
-        <tr>
-            <td>{{ t.content }}</td>
-            <td>{{ t.time }}</td>
-            <td>{{ t.status }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<form class="input-group" action="/add" method="POST">
+    <input class="form-control" id="content" name="content" type="text" value="">
+    <span class="input-group-btn">
+        <button class="btn btn-primary" type="submit">Add</button>
+    </span>
+</form>
 ```
 
-使用一个循环，输出了所有的todo。
+## 后台
 
-### 后台
-
-在`views.py`中，要从后台数据库获取所有的todo：
+然后在`views.py`中：
 
 ```python
 from app import app
-from flask import render_template
+from flask import render_template, request
 from app.models import Todo
 
 
 @app.route('/')
-def to_do():
+def index():
+    return render_template("index.html")
+
+@app.route('/add', methods=['post', ])
+def add():
+    content = request.form.get("content")
+    todo = Todo(content=content)
+    todo.save()
     todos = Todo.objects.all()
     return render_template("index.html", todos=todos)
 ```
 
-在`to_do`方法中：
+获取到数据，将数据保存。
 
-- 获取所有的todo
-- 返回模板和所有的todo
-
-运行项目，在浏览器中就可以看到所有的todo。
+运行项目，在浏览器中，添加一个todo，是不是很简单？
