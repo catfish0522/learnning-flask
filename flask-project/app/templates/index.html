@@ -1,8 +1,32 @@
-<!-- 样本文件 -->
-
-<form class="input-group" action="/add" method="POST">
+<form class="input-group" action="/add" method="post">
     <input class="form-control" id="content" name="content" type="text" value="">
     <span class="input-group-btn">
         <button class="btn btn-primary" type="submit">Add</button>
     </span>
 </form>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Content</th>
+            <th>Time</th>
+            <th>Operation</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for t in todos %}
+        <tr>
+            <td>{{ t.content }}</td>
+            <td>{{ t.time }}</td>
+            <td>
+            {% if t.status == 0 %}
+            <a href="/done/{{ t.id }}" class="btn btn-primary">Done</a>
+            {% else %}
+            <a href="/undone/{{ t.id }}" class="btn btn-primary">Undone</a>
+            {% endif%}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
